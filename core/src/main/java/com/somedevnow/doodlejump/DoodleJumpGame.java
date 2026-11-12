@@ -8,11 +8,9 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.*;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.math.MathUtils;
-
-import com.somedevnow.doodlejump.Player;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class DoodleJumpGame extends ApplicationAdapter {
@@ -20,13 +18,19 @@ public class DoodleJumpGame extends ApplicationAdapter {
     private ShapeRenderer shape;
     private FitViewport viewport;
     private Player player;
+    private Array<Platform> platformArray;
 
     @Override
     public void create() {
         batch = new SpriteBatch();
         shape = new ShapeRenderer();
         viewport = new FitViewport(600,800);
-        player = new Player(284, 100,48, 350, Color.valueOf("#364996"));
+        player = new Player(284, 100,48, 450, Color.valueOf("#364996"));
+        platformArray = new Array<Platform>();
+        platformArray.add(new Platform(260, 48, 80, 24, Color.valueOf("#4d8a7e")));
+        for (int i = 1; i < 9; i++) {
+            platformArray.add(new Platform(MathUtils.random(40, 560), 100+i*64, 80, 24, Color.valueOf("#4d8a7e")));
+        }
     }
 
     @Override
@@ -44,13 +48,7 @@ public class DoodleJumpGame extends ApplicationAdapter {
     public void input() {
         float delta = Gdx.graphics.getDeltaTime();
 
-        if (Gdx.input.isKeyPressed(Keys.A) || Gdx.input.isKeyPressed(Keys.LEFT)) {
-            player.position.add(-(player.getSpeed() * delta),0);
-        } else if (Gdx.input.isKeyPressed(Keys.D) || Gdx.input.isKeyPressed(Keys.RIGHT)) {
-            player.position.add(player.getSpeed() * delta,0);
-        }
-
-        player.position.set(MathUtils.clamp(player.position.x, 0, 600-player.getSize()), player.position.y);
+        player.input(delta);
     }
 
     public void logic() {
@@ -65,8 +63,11 @@ public class DoodleJumpGame extends ApplicationAdapter {
         shape.setColor(Color.valueOf("#8cbade"));
         shape.rect(0,0,600,800);
 
-        shape.setColor(player.getColor());
-        shape.rect(player.position.x, player.position.y, player.getSize(), player.getSize());
+        player.draw(shape);
+
+        for (Platform platform : platformArray) {
+            platform.draw(shape);
+        }
 
         shape.end();
         batch.end();
