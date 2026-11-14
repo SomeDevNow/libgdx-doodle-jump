@@ -1,23 +1,27 @@
-package com.somedevnow.doodlejump;
+package com.somedevnow.doodlejump.objects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.somedevnow.doodlejump.libraries.ArcadePhysics.PhysicsInfo;
 
 public class Player {
     public final Vector2 position;
     private int size;
     private int speed;
     private Color color;
+    public PhysicsInfo physicsInfo;
 
-    public Player(int x, int y, int size, int speed, Color color) {
+    public Player(int x, int y, int size, int speed, float gravity, float drag,  Color color) {
         this.position = new Vector2(x, y);
         this.size = size;
         this.speed = speed;
         this.color = color;
+        this.physicsInfo = new PhysicsInfo(new Rectangle(this.position.x, this.position.y, this.size.x, this.size.y), Vector2.Zero, gravity, drag);
     }
 
     public void input(float delta) {
